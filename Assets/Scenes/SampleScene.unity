@@ -825,7 +825,8 @@ MonoBehaviour:
   ballCount: {fileID: 1228650268}
   numberOfBalls: 5000
   spawnRadius: 0.75
-  spawnInterval: 0.01
+  spawnInterval: 0.1
+  batchBallSize: 10
 --- !u!1 &1228650266
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,7 +11,9 @@ public class BallSpawner : MonoBehaviour
     public int numberOfBalls = 10000; // Total number of balls to spawn
     public float spawnRadius = 0.75f; // Radius within which balls will spawn randomly
     public float spawnInterval = 0.05f; // Time interval between spawning each ball
+    public int batchBallSize = 50;
     private int ballsSpawned;
+    private WaitForSeconds ballSpawnTime;
 
     void Start()
     {
@@ -21,6 +23,7 @@ public class BallSpawner : MonoBehaviour
             return;
         }
         ballsSpawned = 0;
+        ballSpawnTime = new WaitForSeconds(spawnInterval);
         StartCoroutine(SpawnBallsOverTime());
     }
 
@@ -32,8 +35,7 @@ public class BallSpawner : MonoBehaviour
 
     IEnumerator SpawnBallsOverTime()
     {
-        int ballsPerType = numberOfBalls / ballPrefabs.Length; // Roughly even distribution of each type
-
+        int batchSize = batchBallSize; // Number of balls to spawn before yielding
         for (int i = 0; i < numberOfBalls; i++)
         {
             // Determine which prefab to use (0, 1, or 2)
@@ -46,8 +48,11 @@ public class BallSpawner : MonoBehaviour
             Instantiate(ballPrefabs[prefabIndex], spawnPosition, Quaternion.identity);
             ballsSpawned++;
 
-            // Wait for the specified interval before spawning the next ball
-            yield return new WaitForSeconds(spawnInterval);
+            // Yield after a batch of balls to keep performance smooth
+            if (i % batchSize == 0)
+            {
+                yield return ballSpawnTime; // Yield control back to the game loop
+            }
         }
     }
 }
